@@ -47,43 +47,20 @@ def main():
             
         })
 
-    def get_distance(coffeeshop):
+       def get_distance(coffeeshop):
         return coffeeshop['distance']  
     first_coffeeshops = sorted(coffeeshops, key=get_distance)[:5]
 
     m=folium.Map(location=coords)
-    folium.Marker(
-        location=[55.7557913293247580, 37.6215290000000020],
-        tooltip="Click me!",
-        popup="Кофе Хауз",
-        icon=folium.Icon(icon="cloud"),
-    ).add_to(m)
-    folium.Marker(
-        location=[55.7544881949865920, 37.6094491636510710],
-        tooltip="Click me!",
-        popup="Cafetera",
-        icon=folium.Icon(icon="cloud"),
-    ).add_to(m)
-    folium.Marker(
-        location=[55.7471397548410150, 37.6079790000000000],
-        tooltip="Click me!",
-        popup="Fine кофе",
-        icon=folium.Icon(icon="cloud"),
-    ).add_to(m)
-    folium.Marker(
-        location=[55.7471037302211770, 37.6076198783218700],
-        tooltip="Click me!",
-        popup="Costa coffee",
-        icon=folium.Icon(icon="cloud"),
-    ).add_to(m)
-    folium.Marker(
-        location=[55.7537403409148600, 37.6055678397103890],
-        tooltip="Click me!",
-        popup="КОФЕПОРТ",
-        icon=folium.Icon(icon="cloud"),
-    ).add_to(m)
+
+    for shop in first_coffeeshops:
+        folium.Marker(
+            location=[shop['latitude'], shop['longitude']],
+            tooltip="Click me!",
+            popup=[shop['title']],
+            icon=folium.Icon(icon="cloud"),
+        ).add_to(m)
     m.save("index.html")
 
 if __name__=="__main__":
     main()
-    
