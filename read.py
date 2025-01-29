@@ -1,8 +1,9 @@
 import json
 import requests
+import os
 from geopy import distance
-from pprint import pprint
 import folium
+from dotenv import load_dotenv
 
 
 def fetch_coordinates(apikey, address):
@@ -22,20 +23,23 @@ def fetch_coordinates(apikey, address):
     lon, lat = most_relevant['GeoObject']['Point']['pos'].split(" ")
     return lat, lon
 
+
 def main():
+    load_dotenv()
+    api = os.getenv('APIKEY')
     with open("coffee.json", "r", encoding="CP1251") as my_file:
         coffee_content = my_file.read()
     coffees = json.loads(coffee_content)
-    apikey='306ca3f2-7d2b-4867-af78-2147178d15c3'
+    apikey = api
     place = input()
     coords = fetch_coordinates(apikey, place)
 
     coffeeshops = []
 
     for coffee in coffees:
-        coffee_title=coffee['Name']
-        coffee_coordinates1=coffee['Latitude_WGS84']
-        coffee_coordinates2=coffee['Longitude_WGS84']
+        coffee_title = coffee['Name']
+        coffee_coordinates1 = coffee['Latitude_WGS84']
+        coffee_coordinates2 = coffee['Longitude_WGS84']
         coffee_coords = (coffee_coordinates1, coffee_coordinates2)
         dist = distance.distance(coords, coffee_coords).km
         coffeeshops.append({
@@ -43,15 +47,13 @@ def main():
             'distance': dist,
             'latitude': coffee_coordinates1,
             'longitude': coffee_coordinates2
-            
-            
         })
 
-       def get_distance(coffeeshop):
-        return coffeeshop['distance']  
+    def get_distance(coffeeshop):
+        return coffeeshop['distance']
     first_coffeeshops = sorted(coffeeshops, key=get_distance)[:5]
 
-    m=folium.Map(location=coords)
+    m = folium.Map(location=coords)
 
     for shop in first_coffeeshops:
         folium.Marker(
@@ -62,5 +64,6 @@ def main():
         ).add_to(m)
     m.save("index.html")
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     main()
